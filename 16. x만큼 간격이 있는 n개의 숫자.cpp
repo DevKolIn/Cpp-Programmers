@@ -3,7 +3,7 @@ vector<long long> solution(int x, int n) {
     
     for (int idx = 0; idx < n; idx++)
     {
-        result[idx] = (long long)x * (idx + 1);
+        result[idx] = static_cast<long long>(x) * (idx + 1);
     }
     
     return result;
