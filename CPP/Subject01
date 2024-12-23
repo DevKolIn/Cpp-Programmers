@@ -1,0 +1,102 @@
+#include <iostream>
+using namespace std;
+
+const int SIZE = 5;
+
+void swap(int& a, int& b)
+{
+	int	temp;
+
+	temp = a;
+	a = b;
+	b = temp;
+}
+
+int partition(int arr[], int low, int high, bool ascending) {
+    int pivot = arr[high]; // 마지막 요소를 피벗으로 선택
+    int left = low - 1;       // i는 작은 요소의 인덱스를 나타냅니다.
+
+    if (ascending)
+    {
+        for (int j = low; j < high; j++)
+        {
+            if (arr[j] < pivot)
+            {
+                left++;
+                swap(arr[left], arr[j]);
+            }
+        }
+    }
+    else
+    {
+        for (int j = low; j < high; j++)
+        {
+            if (arr[j] > pivot)
+            {
+                left++;
+                swap(arr[left], arr[j]);
+            }
+        }
+    }
+    
+    swap(arr[left + 1], arr[high]); // 피벗을 올바른 위치로 이동
+    return left + 1;                // 피벗의 위치 반환
+}
+
+void qsort(int arr[], int low, int high)
+{
+	if (low >= high)
+        return;
+
+    int pivot = partition(arr, low, high, true);
+
+    qsort(arr, low, pivot - 1);
+    qsort(arr, pivot + 1, high);
+}
+
+float avg(int nums[], int size)
+{
+    float result = 0;
+
+    for (int i = 0; i < size; i++)
+    {
+        result += nums[i];
+    }
+
+    return result / size;
+}
+
+int sum(int nums[], int size)
+{
+    int result = 0;
+
+    for (int i = 0; i < size; i++)
+    {
+        result += nums[i];
+    }
+
+    return result;
+}
+
+int main()
+{
+    int nums[SIZE] = {0,};
+
+    for(int i = 0; i < SIZE; i++)
+    {
+        cout << "숫자를 입력해 주세요 : " << endl;
+        int num;
+        cin >> num;
+        nums[i] = num;
+    }
+
+    cout << "합계 : " << sum(nums, SIZE) << endl;
+    cout << "평균 : " << avg(nums, SIZE) << endl;
+    
+    qsort(nums, 0, SIZE - 1);
+
+    for (int i = 0; i < SIZE; i++)
+    {
+        cout << nums[i] << " ";
+    }
+}
