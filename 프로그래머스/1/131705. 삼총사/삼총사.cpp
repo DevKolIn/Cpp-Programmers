@@ -13,9 +13,7 @@ int solution(vector<int> number) {
         {
             for (int c = b + 1; c < size; c++)
             {
-                int sum = number[a] + number[b] + number[c];
-                if (sum == 0)
-                    result++;
+                if ((number[a] + number[b] + number[c]) == 0) result++;
             }
         }
     }
