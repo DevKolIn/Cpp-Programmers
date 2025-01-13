@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <iostream>
+
 using namespace std;
 
 bool minCompare(int a, int b) {
