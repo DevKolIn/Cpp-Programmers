@@ -1,29 +1,30 @@
 #include <string>
 #include <vector>
-#include <utility>
+#include <map>
 
 using namespace std;
 
 string solution(vector<string> survey, vector<int> choices) {
-    char personalityType[26] = {0,};
+    map<char, int> map;
     
     string answer = "";
     for (int idx = 0; idx < choices.size(); ++idx)
     {
-        char typeAIdx = survey[idx][0] - 'A';
-        char typeBIdx = survey[idx][1] - 'A';
+        char typeAIdx = survey[idx][0];
+        char typeBIdx = survey[idx][1];
         int choice = choices[idx];
         
         if (choice < 4) 
         {
-            personalityType[typeAIdx] += 4 - choice;
+            map[typeAIdx] += 4 - choice;
         }
         if (choice > 4)
         {
-            personalityType[typeBIdx] += choice - 4;
+            map[typeBIdx] += choice - 4;
         }
     }
-    vector<pair<char, char>> pairs =
+    
+    char personalityTypes[4][2] =
     {
         {'R','T'},
         {'C','F'},
@@ -31,15 +32,18 @@ string solution(vector<string> survey, vector<int> choices) {
         {'A','N'},
     };
     
-    for (pair<char, char> pair : pairs)
+    for (int i = 0; i < 4; i++)
     {
-        if (personalityType[pair.first - 'A'] >= personalityType[pair.second - 'A'])
+        int scoreA = map[personalityTypes[i][0]];
+        int scoreB = map[personalityTypes[i][1]];
+        
+        if (scoreA >= scoreB)
         {
-            answer += pair.first;
+            answer += personalityTypes[i][0];
         }
         else
         {
-            answer += pair.second;
+            answer += personalityTypes[i][1];
         }
     }
     
