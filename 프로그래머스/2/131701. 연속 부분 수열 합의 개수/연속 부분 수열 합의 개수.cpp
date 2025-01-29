@@ -1,12 +1,11 @@
 #include <string>
 #include <vector>
-#include <set>
-#include <iostream>
+#include <unordered_set>
 
 using namespace std;
 
 int solution(vector<int> elements) {
-    set<int> set;
+    unordered_set<int> set;
     
     int size = elements.size();
     
