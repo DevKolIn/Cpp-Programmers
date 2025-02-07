@@ -9,7 +9,8 @@ int dfs(vector<int>& numbers, int idx, int target)
     {
         if (target == 0)
             return 1;
-        return 0;
+        else
+            return 0;
     }
 
     int positiveNum = target + numbers[idx];
