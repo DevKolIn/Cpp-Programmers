@@ -1,35 +1,23 @@
 #include <string>
 #include <vector>
-#include <unordered_map>
-#include <set>
+#include <map>
 
 using namespace std;
 
-int solution(vector<int> toppings) {
-    set<int> left;
-    unordered_map<int,int> right;
-        
-    for (int topping : toppings)
-    {
-        right[topping]++;
-    }
-    
+int solution(vector<int> topping) {
     int answer = 0;
-    for (int topping : toppings)
-    {
-        left.emplace(topping);
-        right[topping]--;
-        
-        if (right[topping] == 0)
-        {
-            right.erase(topping);
-        }
-        
-        if (left.size() == right.size())
-        {
-            answer++;
-        }
+    map<int, int> m1;
+    map<int, int> m2;
+    for (int& i : topping) {
+        m2[i]++;
     }
-    
+    for (int i = 0; i < topping.size() - 1; i++) {
+        m1[topping[i]]++;
+        m2[topping[i]]--;
+        if (m2[topping[i]] == 0) {
+            m2.erase(topping[i]);
+        }
+        if (m1.size() == m2.size()) answer++;
+    }
     return answer;
 }
