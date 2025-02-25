@@ -1,57 +1,42 @@
-#include <deque>
-#include <vector>
 #include <iostream>
-
+#include<algorithm>
+#include <functional>         // greater 사용 위해 필요  
+#include <vector>
+#include<queue>
 using namespace std;
-deque<pair<int, int>> bridge;
-int curBridgeWeight = 0;
-int truckIdx = 0;
 
-void EnterTruck(int curTime, int truckWeight)
-{
-    bridge.push_back({curTime, truckWeight});
-    curBridgeWeight += truckWeight;
-    truckIdx++;
-}
+int solution(int bridge_length, int weight, vector<int> truck_weights) {
+    int answer = 0;
+    int count = 0;
+    int Time = 0; 
+    int Truck_weight = 0;
+    queue<pair<int, int>> truck_move;
 
-void ExitTruck()
-{
-    auto frontTruck = bridge.front();
-    curBridgeWeight -= frontTruck.second;
-    bridge.pop_front();
-}
-
-bool CanEnterBridge(vector<int>& truck_weights, int limitedWeight)
-{
-    if (truckIdx >= truck_weights.size())
-        return false;
-    
-    return (curBridgeWeight + truck_weights[truckIdx]) <= limitedWeight;
-}
-
-bool ShouldExitBridge(int curTime, int bridge_length)
-{
-    pair<int, int> frontTruck = bridge.front();
-    return bridge_length <= (curTime - frontTruck.first);
-}
-
-int solution(int bridge_length, int limitedWeight, vector<int> truck_weights) {
-    int time = 0;
-    EnterTruck(time, truck_weights[truckIdx]);
-    while (!bridge.empty())
-    { 
-        if (ShouldExitBridge(time, bridge_length))
+    while (true)
+    {
+        if (weight >= Truck_weight + truck_weights.at(count))
         {
-            ExitTruck();
+            truck_move.push(make_pair(truck_weights.at(count), bridge_length + 1 + Time));
+            Truck_weight += truck_weights.at(count);
+            count++;
         }
-        
-        if (CanEnterBridge(truck_weights, limitedWeight))
+
+        if (count >= truck_weights.size())
         {
-            EnterTruck(time, truck_weights[truckIdx]);
+            answer = truck_move.back().second;
+            break;
         }
-        
-        ++time;
+        else
+        {
+            Time++;
+            if (truck_move.front().second == Time+1)
+            {
+                Truck_weight -= truck_move.front().first;
+                truck_move.pop();
+            }
+        }
+
     }
-    
-    return time;
+
+    return answer;
 }
