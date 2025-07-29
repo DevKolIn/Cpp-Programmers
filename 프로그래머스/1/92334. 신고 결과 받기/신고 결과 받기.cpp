@@ -7,18 +7,6 @@
 
 using namespace std;
 
-void split(char delimiter, const string& str, string& left, string& right)
-{
-    std::istringstream stream(str);
-    string token;
-    
-    getline(stream, token, delimiter);
-    left = token;
-    
-    getline(stream, token, delimiter);
-    right = token;
-}
-
 vector<int> solution(vector<string> id_list, vector<string> reports, int k) {
     vector<int> answer(id_list.size(), 0);
     
@@ -35,7 +23,8 @@ vector<int> solution(vector<string> id_list, vector<string> reports, int k) {
     {
         string userId;
         string target;
-        split(' ', report, userId, target);
+        stringstream in(report);
+        in >> userId >> target;
         
         if (ReportedUsers[target].find(userId) == ReportedUsers[target].end())
         {
