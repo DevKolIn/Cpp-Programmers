@@ -1,22 +1,12 @@
-#include <string>
-#include <vector>
 #include <cmath>
-#include <deque>
-#include <iostream>
 
-using namespace std;
-
-bool isPrimNum(string& str)
+bool isPrimeNum(long long num)
 {
-    if (str.empty())
+    if (num <= 1)
         return false;
     
-    long num = std::stol(str);
-    if (num < 2)
-        return false;
-    
-    long numSqrt = sqrt(num);
-    for (int i = 2; i <= numSqrt; i++)
+    int sqrtNum = std::sqrt(num);
+    for (int i = 2; i <= sqrtNum; ++i)
     {
         if (num % i == 0)
             return false;
@@ -26,38 +16,35 @@ bool isPrimNum(string& str)
 }
 
 int solution(int n, int k) {
-    int answer = 0;
-    deque<char> dq;
+    int answer = 0, remain = 0;
+    long long num = 0;
     
     while (n)
     {
-        int remainder = n % k;
-        if (remainder == 0)
+        remain = n % k;
+        
+        if (remain == 0)
         {
-            if (dq.size() != 0)
+            if (isPrimeNum(num))
             {
-                string str = string(dq.begin(), dq.end());
-                if (isPrimNum(str))
-                {
-                    answer++;
-                }
+                answer++;
             }
             
-            dq.clear();
+            num = 0;
         }
         else
         {
-            dq.push_front(remainder + '0');
+            int digits = (num == 0) ? 0 : log10(num) + 1;
+            num = remain * pow(10, digits) + num;
         }
         
         n = n / k;
     }
     
-    string str = string(dq.begin(), dq.end());
-    if (isPrimNum(str))
+    if (isPrimeNum(num))
     {
         answer++;
     }
-        
+
     return answer;
 }
