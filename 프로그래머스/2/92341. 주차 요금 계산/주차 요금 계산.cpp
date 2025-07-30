@@ -1,86 +1,67 @@
-#include <string>
-#include <vector>
-#include <sstream>
-#include <unordered_map>
 #include <map>
+#include <vector>
+#include <string>
+#include <sstream>
 #include <cmath>
+
+#define EndTime 1439
 
 using namespace std;
 
-std::vector<std::string> splitBySpace(const std::string& str) {
-    std::vector<std::string> tokens;
-    std::istringstream iss(str);
-    std::string token;
-
-    while (iss >> token) {
-        tokens.push_back(token);
-    }
-
-    return tokens;
-}
-
-int TimeToInt(const string& time)
+struct ParkingInfo
 {
-    std::stringstream ss(time);
-    std::string strHour, strMinute;
-    
-    std::getline(ss, strHour, ':');
-    std::getline(ss, strMinute, ':');
-
-    int hour = stoi(strHour);
-    int minute = stoi(strMinute);
-    
-    return (hour * 60) + minute;
-}
-
-const int MAX_DAY_MINUTE = 1439;
+    int inTime = -1;
+    int totalTime = 0;
+};
 
 vector<int> solution(vector<int> fees, vector<string> records) {
-    unordered_map<string, int> dataMap;
-    map<string, int> sumMap;
-    
-    for (string& record : records)
-    {
-        std::vector<std::string> result = splitBySpace(record);
-        string& strTime = result[0];
-        string& strCarNum = result[1];
-        string& strCarInOut = result[2];
+    map<string, ParkingInfo> parkingUsers;
         
-        auto it = dataMap.find(strCarNum);
-        if (it != dataMap.end())
+    for (const string& record : records)
+    {
+        istringstream iss(record);
+        string time, carNum, inout;
+        iss >> time >> carNum >> inout;
+        
+        istringstream timeIss(time);
+        int hour, minute; char colon;
+        timeIss >> hour >> colon >> minute;
+        
+        int timeMinute = hour * 60 + minute;
+        
+        ParkingInfo& parkinginfo = parkingUsers[carNum];
+            
+        if (inout == "IN")
         {
-            sumMap[strCarNum] += TimeToInt(strTime) - it->second;
-            dataMap.erase(it);
+            parkinginfo.inTime = timeMinute;
         }
         else
         {
-            dataMap[strCarNum] = TimeToInt(strTime);
+            parkinginfo.totalTime += timeMinute - parkinginfo.inTime;
+            parkinginfo.inTime = -1;
         }
     }
     
-    for (auto& pair : dataMap)
+    vector<int> ret;
+    for (auto& parkingUser : parkingUsers)
     {
-        sumMap[pair.first] += MAX_DAY_MINUTE - pair.second;
-    }
-    
-    int defaultTime = fees[0];
-    int defaultFee = fees[1];
-    int unitTime = fees[2];
-    int unitFee = fees[3];
-    vector<int> answer;
-    for (auto& pair : sumMap)
-    {
-        int fee = defaultFee;
-        int sumTime = pair.second;
+        ParkingInfo& parkingInfo = parkingUser.second;
         
-        if (sumTime >= defaultTime)
+        if (parkingInfo.inTime != -1)
         {
-            int totalTime = ceil(((float)sumTime - defaultTime) / unitTime);
-            fee = defaultFee + totalTime * unitFee;
+            parkingInfo.totalTime += EndTime - parkingInfo.inTime;
         }
-
-        answer.push_back(fee);
+        
+        int fee = fees[1];
+        
+        if (parkingInfo.totalTime > fees[0])
+        {
+            int unitTime = ceil(((parkingInfo.totalTime - fees[0]) / (float)fees[2]));
+            fee += unitTime * fees[3];
+        }
+        
+        ret.push_back(fee);
     }
     
-    return answer;
+    return ret;
 }
