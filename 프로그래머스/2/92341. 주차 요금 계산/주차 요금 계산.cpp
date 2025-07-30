@@ -1,67 +1,33 @@
-#include <map>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <cmath>
-
-#define EndTime 1439
-
+#include <bits/stdc++.h>
 using namespace std;
 
-struct ParkingInfo
-{
-    int inTime = -1;
-    int totalTime = 0;
-};
+int conv(string& t) {
+    int h = (t[0] - 48) * 10 + t[1] - 48;
+    int m = (t[3] - 48) * 10 + t[4] - 48;
+    return h * 60 + m;
+}
 
 vector<int> solution(vector<int> fees, vector<string> records) {
-    map<string, ParkingInfo> parkingUsers;
-        
-    for (const string& record : records)
-    {
-        istringstream iss(record);
-        string time, carNum, inout;
-        iss >> time >> carNum >> inout;
-        
-        istringstream timeIss(time);
-        int hour, minute; char colon;
-        timeIss >> hour >> colon >> minute;
-        
-        int timeMinute = hour * 60 + minute;
-        
-        ParkingInfo& parkinginfo = parkingUsers[carNum];
-            
-        if (inout == "IN")
-        {
-            parkinginfo.inTime = timeMinute;
-        }
-        else
-        {
-            parkinginfo.totalTime += timeMinute - parkinginfo.inTime;
-            parkinginfo.inTime = -1;
-        }
+    vector<int> vec[10000];
+    for (auto& record : records) {
+        stringstream ss(record);
+        string a, b, c;
+        ss >> a >> b >> c;
+        vec[stoi(b)].push_back(conv(a));
     }
-    
-    vector<int> ret;
-    for (auto& parkingUser : parkingUsers)
-    {
-        ParkingInfo& parkingInfo = parkingUser.second;
-        
-        if (parkingInfo.inTime != -1)
-        {
-            parkingInfo.totalTime += EndTime - parkingInfo.inTime;
-        }
-        
-        int fee = fees[1];
-        
-        if (parkingInfo.totalTime > fees[0])
-        {
-            int unitTime = ceil(((parkingInfo.totalTime - fees[0]) / (float)fees[2]));
-            fee += unitTime * fees[3];
-        }
-        
-        ret.push_back(fee);
+
+    vector<int> ans;
+    for (int i = 0; i < 10000; ++i) if (!vec[i].empty()) {
+        if (vec[i].size() & 1) vec[i].push_back(23 * 60 + 59);
+
+        int sum = 0;
+        for (int j = 1; j < vec[i].size(); j += 2) sum += vec[i][j] - vec[i][j - 1];
+
+        int val = fees[1];
+        if (sum > fees[0]) val += (sum - fees[0] + fees[2] - 1) / fees[2] * fees[3];
+
+        ans.push_back(val);
     }
-    
-    return ret;
+
+    return ans;
 }
