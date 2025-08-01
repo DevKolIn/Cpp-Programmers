@@ -1,50 +1,41 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
-int N,M;
-std::vector<int> v;
-std::vector<bool> isExist;
+int N, M;
+std::vector<bool> visited;
+std::vector<int> result;
 
-void combination(std::vector<int>& arr, int index)
+void dfs(int depth)
 {
-    if (arr.size() == M)
+    if (depth == M)
     {
-        for (int i = 0; i < M; ++i)
-        {
-            std::cout << arr[i] << " ";
-        }
+        for (int num : result)
+            std::cout << num << ' ';
         std::cout << '\n';
-
         return;
     }
 
-    for (int i = 0; i < v.size(); ++i)
+    for (int i = 1; i <= N; ++i)
     {
-        if (isExist[i])
+        if (visited[i])
             continue;
 
-        isExist[i] = true;
-        arr.push_back(v[i]);
-
-        combination(arr, i + 1);
-        
-        isExist[i] = false;
-        arr.pop_back();
+        visited[i] = true;
+        result.push_back(i);
+        dfs(depth + 1);
+        result.pop_back();
+        visited[i] = false;
     }
 }
 
 int main()
 {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
     std::cin >> N >> M;
 
-    v.resize(N);
-    isExist.resize(N, false);
-    for (int i = 0; i < N; ++i)
-    {
-        v[i] = i + 1;
-    }
-
-    std::vector<int> arr;
-    combination(arr, 0);
+    visited.resize(N + 1, false);
+    dfs(0);
+    return 0;
 }
